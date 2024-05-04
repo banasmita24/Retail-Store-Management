@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Retail Store Management</title>
+    <link rel="stylesheet" href="/static/retail.css">
+</head>
+<body>
+    <h1>Retail Store Management</h1>
+    
+
+    <h2>All Products</h2>
+    <ul>
+        {% for product in products %}
+            <li>ID: {{ product[0] }}, Name: {{ product[1] }}, Price: {{ product[2] }}, Quantity: {{ product[3] }}</li>
+        {% endfor %}
+    </ul>
+
+ 
+    <h2>Add Product</h2>
+    <form action="/add" method="post">
+        Name: <input type="text" name="name" required><br>
+        Price: <input type="number" name="price" required><br>
+        quantity: <input type="number" name="quantity" required><br>
+        <input type="submit" value="Add Product">
+    </form>
+
+
+    <h2>Update Product</h2>
+    <form action="/update" method="post">
+        ID: <input type="number" name="id" required><br>
+        Name: <input type="text" name="name"><br>
+        Price: <input type="number" name="price"><br>
+        Quantity: <input type="number" name="quantity"><br>
+        <input type="submit" value="Update Product">
+    </form>
+
+
+    <h2>Delete Product</h2>
+    <form action="/delete" method="post">
+        ID: <input type="number" name="id" required><br>
+        <input type="submit" value="Delete Product">
+    </form>
+
+
+    <h2>Search Products</h2>
+    <form action="/search" method="get">
+        Query: <input type="text" name="query"><br>
+        <input type="submit" value="Search">
+    </form>
+
+    <div id="search-results"></div>
+    
+
+    <script>
+    document.querySelector('form[action="/search"]').addEventListener('submit', function(event) {
+        event.preventDefault();
+        fetch(`/search?query=${document.querySelector('input[name="query"]').value}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('search-results');
+                resultsDiv.innerHTML = '';
+                if (data.length === 0) {
+                    const noResultsMessage = document.createElement('p');
+                    noResultsMessage.textContent = 'No items found!';
+                    resultsDiv.appendChild(noResultsMessage);
+                } else {
+                    data.forEach(product => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `ID: ${product[0]}, Name: ${product[1]}, Price: ${product[2]}, Quantity: ${product[3]}`;
+                        resultsDiv.appendChild(listItem);
+                    });
+                }
+            });
+    });
+
+    </script>
+</body>
+</html>
